@@ -9,7 +9,7 @@ import java.util.concurrent.BlockingQueue;
 
 public class Main {
     public static void main(String[] args) {
-        startGame("52.27.15.59", 2000);
+        startGame("10.10.10.2", 2000);
     }
 
     public static void startGame(String serverIp, int serverPort) {
