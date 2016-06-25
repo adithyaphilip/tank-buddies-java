@@ -2,14 +2,24 @@
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class Main {
     public static void main(String[] args) {
-        startGame("10.10.10.2", 2000);
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter server ip:");
+        String serverIp = sc.nextLine();
+        System.out.println("Enter server port:");
+        int port = sc.nextInt();
+        sc.close();
+        startGame(serverIp, port);
     }
 
     public static void startGame(String serverIp, int serverPort) {
@@ -24,7 +34,12 @@ public class Main {
                 try {
                     Gui gui = new Gui();
                     gui.start(moveQueue);
-                    startReceivingPeriodic(game, gui, ds);
+                    DatagramSocket datagramSocket = new DatagramSocket();
+                    DatagramPacket dp = new DatagramPacket("1".getBytes(), "1".getBytes().length);
+                    dp.setSocketAddress(new InetSocketAddress(serverIp, serverPort));
+                    datagramSocket.send(dp);
+                    DataInputStream udpDs = new DataInputStream(new UdpInputStream(datagramSocket));
+                    startReceivingPeriodic(game, gui, udpDs);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
